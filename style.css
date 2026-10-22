@@ -1075,10 +1075,6 @@ input:focus-visible {
     min-height: 70px;
   }
 
-  .install-button {
-    display: none;
-  }
-
   .hero {
     min-height: 0;
     padding: 35px 0 27px;
@@ -1154,6 +1150,30 @@ input:focus-visible {
   .brand__product {
     font-size: 8px;
     letter-spacing: 0.11em;
+  }
+
+  .header-tools {
+    gap: 8px;
+  }
+
+  .install-button {
+    min-height: 34px;
+    gap: 5px;
+    padding: 0 8px;
+    font-size: 10px;
+  }
+
+  .offline-indicator {
+    gap: 0;
+  }
+
+  #offline-status {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
   }
 
   .offline-indicator {

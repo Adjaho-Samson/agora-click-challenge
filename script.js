@@ -87,8 +87,12 @@
 
   elements.installButton.addEventListener("click", async () => {
     if (!deferredInstallPrompt) {
+      const isAppleMobile = /iPhone|iPad|iPod/.test(navigator.userAgent);
+      const installInstructions = isAppleMobile
+        ? "Sur iPhone ou iPad, touche Partager puis « Sur l’écran d’accueil »."
+        : "Ouvre le menu de ton navigateur et choisis « Installer l’application » ou « Ajouter à l’écran d’accueil ».";
       window.alert(
-        "Pour installer le jeu, ouvre le menu de ton navigateur et choisis « Installer AGORA Click Challenge » ou « Installer cette page comme application ». Le site doit être hébergé en HTTPS.",
+        `${installInstructions} Le site doit être hébergé en HTTPS.`,
       );
       return;
     }
