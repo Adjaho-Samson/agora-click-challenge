@@ -18,7 +18,14 @@
   --radius-large: 22px;
   --radius-medium: 15px;
   --shadow-card: 0 22px 70px rgba(0, 0, 0, 0.25);
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -44,8 +51,16 @@ body {
   margin: 0;
   color: var(--text);
   background:
-    radial-gradient(ellipse at 76% 4%, rgba(115, 24, 42, 0.15), transparent 31rem),
-    radial-gradient(ellipse at 4% 55%, rgba(43, 48, 61, 0.12), transparent 34rem),
+    radial-gradient(
+      ellipse at 76% 4%,
+      rgba(115, 24, 42, 0.15),
+      transparent 31rem
+    ),
+    radial-gradient(
+      ellipse at 4% 55%,
+      rgba(43, 48, 61, 0.12),
+      transparent 34rem
+    ),
     var(--page);
 }
 
@@ -78,6 +93,45 @@ input:focus-visible {
   border-bottom: 1px solid var(--line);
 }
 
+.header-tools {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.install-button {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 0 11px;
+  border: 1px solid rgba(242, 54, 79, 0.35);
+  border-radius: 9px;
+  background: rgba(242, 54, 79, 0.08);
+  color: #f4f5f7;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 700;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease;
+}
+
+.install-button:hover {
+  border-color: var(--red-bright);
+  background: rgba(242, 54, 79, 0.17);
+}
+
+.install-button svg {
+  width: 16px;
+  height: 16px;
+}
+
+.install-button[hidden] {
+  display: none;
+}
+
 .brand {
   display: inline-flex;
   align-items: center;
@@ -108,9 +162,17 @@ input:focus-visible {
   transform: skew(8deg);
 }
 
-.brand__mark span:nth-child(1) { height: 11px; opacity: 0.7; }
-.brand__mark span:nth-child(2) { height: 18px; }
-.brand__mark span:nth-child(3) { height: 13px; opacity: 0.85; }
+.brand__mark span:nth-child(1) {
+  height: 11px;
+  opacity: 0.7;
+}
+.brand__mark span:nth-child(2) {
+  height: 18px;
+}
+.brand__mark span:nth-child(3) {
+  height: 13px;
+  opacity: 0.85;
+}
 
 .brand__name {
   font-size: 17px;
@@ -219,7 +281,11 @@ input:focus-visible {
   overflow: hidden;
   border: 1px solid rgba(242, 54, 79, 0.28);
   border-radius: 18px;
-  background: linear-gradient(135deg, rgba(242, 54, 79, 0.12), rgba(242, 54, 79, 0.025));
+  background: linear-gradient(
+    135deg,
+    rgba(242, 54, 79, 0.12),
+    rgba(242, 54, 79, 0.025)
+  );
 }
 
 .duration-badge__number {
@@ -270,7 +336,9 @@ input:focus-visible {
 .howto-card {
   border: 1px solid var(--line);
   border-radius: var(--radius-large);
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.026), transparent 55%), var(--panel);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.026), transparent 55%),
+    var(--panel);
   box-shadow: var(--shadow-card);
 }
 
@@ -367,7 +435,11 @@ input:focus-visible {
   border: 1px solid rgba(255, 255, 255, 0.105);
   border-radius: var(--radius-medium);
   background:
-    radial-gradient(ellipse at 52% 53%, rgba(105, 31, 44, 0.13), transparent 42%),
+    radial-gradient(
+      ellipse at 52% 53%,
+      rgba(105, 31, 44, 0.13),
+      transparent 42%
+    ),
     linear-gradient(145deg, #15171d, #101216 75%);
 }
 
@@ -376,7 +448,11 @@ input:focus-visible {
   z-index: -1;
   inset: 0;
   border-radius: inherit;
-  background: radial-gradient(ellipse at center, transparent 33%, rgba(4, 5, 7, 0.35) 100%);
+  background: radial-gradient(
+    ellipse at center,
+    transparent 33%,
+    rgba(4, 5, 7, 0.35) 100%
+  );
   content: "";
   pointer-events: none;
 }
@@ -515,7 +591,9 @@ input:focus-visible {
   border: 3px solid #f7f7f7;
   border-radius: 50%;
   background: radial-gradient(circle, #f23d54 0 31%, #d91e38 32% 100%);
-  box-shadow: inset 0 0 0 7px rgba(255, 255, 255, 0.12), 0 0 0 1px rgba(255, 255, 255, 0.2);
+  box-shadow:
+    inset 0 0 0 7px rgba(255, 255, 255, 0.12),
+    0 0 0 1px rgba(255, 255, 255, 0.2);
 }
 
 .target__visual::before {
@@ -653,7 +731,12 @@ input:focus-visible {
   font-size: 12px;
   font-weight: 750;
   letter-spacing: 0.01em;
-  transition: background-color 150ms ease, border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease, opacity 150ms ease;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    transform 150ms ease,
+    opacity 150ms ease;
 }
 
 .button--primary {
@@ -784,7 +867,11 @@ input:focus-visible {
 
 .leaderboard__item--first {
   border-color: rgba(242, 54, 79, 0.2);
-  background: linear-gradient(90deg, rgba(242, 54, 79, 0.08), rgba(255, 255, 255, 0.025));
+  background: linear-gradient(
+    90deg,
+    rgba(242, 54, 79, 0.08),
+    rgba(255, 255, 255, 0.025)
+  );
 }
 
 .leaderboard__rank {
@@ -949,8 +1036,14 @@ input:focus-visible {
 }
 
 @keyframes target-appear {
-  from { opacity: 0; transform: translate(-50%, -50%) scale(0.55); }
-  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.55);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
 }
 
 @media (max-width: 940px) {
@@ -980,6 +1073,10 @@ input:focus-visible {
 
   .site-header {
     min-height: 70px;
+  }
+
+  .install-button {
+    display: none;
   }
 
   .hero {

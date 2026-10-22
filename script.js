@@ -30,7 +30,9 @@
     leaderboardList: document.getElementById("leaderboard-list"),
     leaderboardStatus: document.getElementById("leaderboard-status"),
     personalBest: document.getElementById("personal-best"),
-    clearScoresButton: document.getElementById("clear-scores-button")
+    clearScoresButton: document.getElementById("clear-scores-button"),
+    installButton: document.getElementById("install-app-button"),
+    offlineStatus: document.getElementById("offline-status"),
   };
 
   const missingElements = Object.entries(elements)
@@ -38,7 +40,10 @@
     .map(([name]) => name);
 
   if (missingElements.length > 0) {
-    console.error("AGORA Click Challenge : éléments HTML introuvables.", missingElements);
+    console.error(
+      "AGORA Click Challenge : éléments HTML introuvables.",
+      missingElements,
+    );
     return;
   }
 
@@ -50,8 +55,56 @@
     countdownIntervalId: null,
     gameEndsAt: 0,
     lastAnnouncedSecond: null,
-    storageWarning: false
+    storageWarning: false,
   };
+  let deferredInstallPrompt = null;
+
+  function registerOfflineSupport() {
+    if (!window.isSecureContext || !("serviceWorker" in navigator)) {
+      elements.offlineStatus.textContent = "Hors ligne indisponible";
+      return;
+    }
+
+    navigator.serviceWorker
+      .register("./service-worker.js")
+      .then(() => navigator.serviceWorker.ready)
+      .then(() => {
+        elements.offlineStatus.textContent = "Hors ligne prêt";
+      })
+      .catch((error) => {
+        console.error(
+          "AGORA Click Challenge : impossible de préparer le mode hors ligne.",
+          error,
+        );
+        elements.offlineStatus.textContent = "Hors ligne indisponible";
+      });
+  }
+
+  window.addEventListener("beforeinstallprompt", (event) => {
+    event.preventDefault();
+    deferredInstallPrompt = event;
+  });
+
+  elements.installButton.addEventListener("click", async () => {
+    if (!deferredInstallPrompt) {
+      window.alert(
+        "Pour installer le jeu, ouvre le menu de ton navigateur et choisis « Installer AGORA Click Challenge » ou « Installer cette page comme application ». Le site doit être hébergé en HTTPS.",
+      );
+      return;
+    }
+
+    deferredInstallPrompt.prompt();
+    await deferredInstallPrompt.userChoice;
+    deferredInstallPrompt = null;
+  });
+
+  window.addEventListener("appinstalled", () => {
+    elements.installButton.hidden = true;
+  });
+
+  if (window.matchMedia("(display-mode: standalone)").matches) {
+    elements.installButton.hidden = true;
+  }
 
   // Nettoie et limite le pseudonyme sans jamais l'interpréter comme du HTML.
   function normalizePlayerName(value) {
@@ -64,12 +117,17 @@
       return null;
     }
 
-    if (typeof entry.name !== "string" || !Number.isSafeInteger(entry.score) || entry.score < 0) {
+    if (
+      typeof entry.name !== "string" ||
+      !Number.isSafeInteger(entry.score) ||
+      entry.score < 0
+    ) {
       return null;
     }
 
     const name = normalizePlayerName(entry.name);
-    const timestamp = typeof entry.date === "string" ? Date.parse(entry.date) : Number.NaN;
+    const timestamp =
+      typeof entry.date === "string" ? Date.parse(entry.date) : Number.NaN;
 
     if (!name || Number.isNaN(timestamp)) {
       return null;
@@ -78,7 +136,7 @@
     return {
       name,
       score: entry.score,
-      date: new Date(timestamp).toISOString()
+      date: new Date(timestamp).toISOString(),
     };
   }
 
@@ -123,7 +181,7 @@
     try {
       return new Intl.DateTimeFormat("fr-FR", {
         day: "2-digit",
-        month: "short"
+        month: "short",
       }).format(new Date(isoDate));
     } catch (error) {
       return "Date inconnue";
@@ -131,23 +189,26 @@
   }
 
   function renderLeaderboard(scores = readStoredScores()) {
-    const visibleScores = [...scores].sort(compareScores).slice(0, VISIBLE_SCORE_COUNT);
+    const visibleScores = [...scores]
+      .sort(compareScores)
+      .slice(0, VISIBLE_SCORE_COUNT);
     elements.leaderboardList.replaceChildren();
-    elements.personalBest.textContent = visibleScores.length > 0
-      ? String(visibleScores[0].score)
-      : "—";
+    elements.personalBest.textContent =
+      visibleScores.length > 0 ? String(visibleScores[0].score) : "—";
 
     if (visibleScores.length === 0) {
       const emptyItem = document.createElement("li");
       emptyItem.className = "leaderboard__empty";
-      emptyItem.textContent = "Tes scores apparaîtront ici après ta première partie.";
+      emptyItem.textContent =
+        "Tes scores apparaîtront ici après ta première partie.";
       elements.leaderboardList.append(emptyItem);
     } else {
       visibleScores.forEach((entry, index) => {
         const item = document.createElement("li");
-        item.className = index === 0
-          ? "leaderboard__item leaderboard__item--first"
-          : "leaderboard__item";
+        item.className =
+          index === 0
+            ? "leaderboard__item leaderboard__item--first"
+            : "leaderboard__item";
 
         const rank = document.createElement("span");
         rank.className = "leaderboard__rank";
@@ -177,11 +238,14 @@
     }
 
     if (state.storageWarning) {
-      elements.leaderboardStatus.textContent = "Le classement local est illisible ou indisponible. Tu peux quand même jouer.";
+      elements.leaderboardStatus.textContent =
+        "Le classement local est illisible ou indisponible. Tu peux quand même jouer.";
     } else if (visibleScores.length === 0) {
-      elements.leaderboardStatus.textContent = "Les scores sont conservés uniquement dans ce navigateur.";
+      elements.leaderboardStatus.textContent =
+        "Les scores sont conservés uniquement dans ce navigateur.";
     } else {
-      elements.leaderboardStatus.textContent = "Classement enregistré uniquement sur cet appareil.";
+      elements.leaderboardStatus.textContent =
+        "Classement enregistré uniquement sur cet appareil.";
     }
   }
 
@@ -211,9 +275,18 @@
     const horizontalInset = 12;
     const verticalInset = 12;
     const minimumX = targetSize / 2 + horizontalInset;
-    const maximumX = Math.max(minimumX, areaWidth - targetSize / 2 - horizontalInset);
-    const minimumY = Math.min(targetSize / 2 + 52, areaHeight - targetSize / 2 - verticalInset);
-    const maximumY = Math.max(minimumY, areaHeight - targetSize / 2 - verticalInset);
+    const maximumX = Math.max(
+      minimumX,
+      areaWidth - targetSize / 2 - horizontalInset,
+    );
+    const minimumY = Math.min(
+      targetSize / 2 + 52,
+      areaHeight - targetSize / 2 - verticalInset,
+    );
+    const maximumY = Math.max(
+      minimumY,
+      areaHeight - targetSize / 2 - verticalInset,
+    );
 
     const randomX = minimumX + Math.random() * (maximumX - minimumX);
     const randomY = minimumY + Math.random() * (maximumY - minimumY);
@@ -229,7 +302,8 @@
 
     const millisecondsRemaining = Math.max(0, state.gameEndsAt - Date.now());
     const secondsRemaining = Math.ceil(millisecondsRemaining / 1000);
-    const progressPercent = (millisecondsRemaining / GAME_DURATION_MILLISECONDS) * 100;
+    const progressPercent =
+      (millisecondsRemaining / GAME_DURATION_MILLISECONDS) * 100;
 
     elements.timerValue.textContent = formatTime(secondsRemaining);
     elements.timerProgress.style.width = `${progressPercent}%`;
@@ -239,7 +313,7 @@
       const secondWord = secondsRemaining === 1 ? "seconde" : "secondes";
       elements.timerTrack.setAttribute(
         "aria-valuetext",
-        `${secondsRemaining} ${secondWord} restantes`
+        `${secondsRemaining} ${secondWord} restantes`,
       );
       state.lastAnnouncedSecond = secondsRemaining;
     }
@@ -312,8 +386,14 @@
     elements.scoreValue.textContent = "0";
     elements.timerValue.textContent = formatTime(GAME_DURATION_SECONDS);
     elements.timerProgress.style.width = "100%";
-    elements.timerTrack.setAttribute("aria-valuenow", String(GAME_DURATION_SECONDS));
-    elements.timerTrack.setAttribute("aria-valuetext", `${GAME_DURATION_SECONDS} secondes restantes`);
+    elements.timerTrack.setAttribute(
+      "aria-valuenow",
+      String(GAME_DURATION_SECONDS),
+    );
+    elements.timerTrack.setAttribute(
+      "aria-valuetext",
+      `${GAME_DURATION_SECONDS} secondes restantes`,
+    );
     elements.arenaIntro.hidden = true;
     elements.resultOverlay.hidden = true;
     elements.target.hidden = false;
@@ -323,7 +403,8 @@
     elements.saveFeedback.textContent = "";
     elements.startButton.disabled = true;
     elements.startLabel.textContent = "Partie en cours";
-    elements.gameStatus.textContent = "La partie est lancée. Clique sur la cible rouge.";
+    elements.gameStatus.textContent =
+      "La partie est lancée. Clique sur la cible rouge.";
 
     moveTarget();
     updateCountdown();
@@ -357,7 +438,8 @@
     const playerName = normalizePlayerName(elements.playerName.value);
 
     if (!playerName) {
-      elements.saveFeedback.textContent = "Saisis un pseudonyme pour enregistrer ton score.";
+      elements.saveFeedback.textContent =
+        "Saisis un pseudonyme pour enregistrer ton score.";
       elements.playerName.focus();
       return;
     }
@@ -365,9 +447,11 @@
     const newEntry = {
       name: playerName,
       score: state.score,
-      date: new Date().toISOString()
+      date: new Date().toISOString(),
     };
-    const allScores = [...readStoredScores(), newEntry].sort(compareScores).slice(0, MAX_STORED_SCORES);
+    const allScores = [...readStoredScores(), newEntry]
+      .sort(compareScores)
+      .slice(0, MAX_STORED_SCORES);
 
     try {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(allScores));
@@ -379,13 +463,17 @@
       elements.saveFeedback.textContent = "Score enregistré sur cet appareil.";
     } catch (error) {
       state.storageWarning = true;
-      elements.leaderboardStatus.textContent = "Le navigateur ne permet pas l’écriture du classement local.";
-      elements.saveFeedback.textContent = "Impossible d’enregistrer ici. Le jeu reste disponible.";
+      elements.leaderboardStatus.textContent =
+        "Le navigateur ne permet pas l’écriture du classement local.";
+      elements.saveFeedback.textContent =
+        "Impossible d’enregistrer ici. Le jeu reste disponible.";
     }
   }
 
   function clearLeaderboard() {
-    const confirmed = window.confirm("Effacer tous les meilleurs scores enregistrés dans ce navigateur ?");
+    const confirmed = window.confirm(
+      "Effacer tous les meilleurs scores enregistrés dans ce navigateur ?",
+    );
 
     if (!confirmed) {
       return;
@@ -398,7 +486,8 @@
       elements.leaderboardStatus.textContent = "Le classement a été effacé.";
     } catch (error) {
       state.storageWarning = true;
-      elements.leaderboardStatus.textContent = "Impossible d’effacer le classement dans ce navigateur.";
+      elements.leaderboardStatus.textContent =
+        "Impossible d’effacer le classement dans ce navigateur.";
     }
   }
 
@@ -420,4 +509,5 @@
   });
 
   renderLeaderboard();
+  registerOfflineSupport();
 })();
