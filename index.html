@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b0d10">
+  <meta name="description" content="AGORA Click Challenge : un mini-jeu de réflexes de 30 secondes, jouable hors ligne.">
+  <title>AGORA Click Challenge</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <div class="page-shell">
+    <header class="site-header">
+      <a class="brand" href="index.html" aria-label="AGORA Click Challenge, accueil">
+        <span class="brand__mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span class="brand__name">AGORA</span>
+        <span class="brand__divider" aria-hidden="true"></span>
+        <span class="brand__product">CLICK CHALLENGE</span>
+      </a>
+      <div class="offline-indicator"><span class="offline-indicator__dot" aria-hidden="true"></span>100 % hors ligne</div>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="page-title">
+        <div class="hero__copy">
+          <p class="eyebrow"><span class="eyebrow__line" aria-hidden="true"></span> LE MINI-JEU DE RÉFLEXES</p>
+          <h1 id="page-title">AGORA <span>Click Challenge</span></h1>
+          <p class="hero__description">Une cible. Trente secondes. À toi de jouer : clique dessus à chaque apparition et signe ton meilleur score.</p>
+        </div>
+        <div class="duration-badge" aria-label="Durée d'une partie : 30 secondes">
+          <span class="duration-badge__number">30</span>
+          <span class="duration-badge__label">SECONDES<br>POUR JOUER</span>
+          <span class="duration-badge__orbit" aria-hidden="true"></span>
+        </div>
+      </section>
+
+      <div class="content-grid">
+        <section class="game-card" aria-labelledby="game-section-title">
+          <div class="game-card__header">
+            <div class="game-card__title">
+              <p class="section-label">ZONE DE JEU</p>
+              <h2 id="game-section-title">Prêt·e à cliquer ?</h2>
+            </div>
+            <div class="stats" aria-label="Statistiques de la partie">
+              <div class="stat stat--score">
+                <span class="stat__label">SCORE</span>
+                <strong class="stat__value" id="score-value" aria-live="polite" aria-atomic="true">0</strong>
+              </div>
+              <div class="stat stat--time">
+                <span class="stat__label">TEMPS</span>
+                <strong class="stat__value" id="timer-value">00:30</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="timer-track" id="timer-track" role="progressbar" aria-label="Temps restant" aria-valuemin="0" aria-valuemax="30" aria-valuenow="30" aria-valuetext="30 secondes restantes">
+            <span class="timer-track__fill" id="timer-progress"></span>
+          </div>
+
+          <div class="arena" id="game-area" role="group" aria-label="Zone de jeu" aria-describedby="arena-instructions">
+            <div class="arena__grid" aria-hidden="true"></div>
+            <div class="arena__label" aria-hidden="true"><span></span>ZONE DE RÉFLEXES</div>
+
+            <div class="arena-intro" id="arena-instructions">
+              <div class="arena-intro__mark" aria-hidden="true"><span></span><span></span></div>
+              <p class="arena-intro__eyebrow">À TOI DE JOUER</p>
+              <h3>Prêt·e à cliquer ?</h3>
+              <p>La cible rouge apparaîtra ici.<br>Chaque clic réussi vaut un point.</p>
+            </div>
+
+            <button class="target" id="target" type="button" aria-label="Cliquer sur la cible pour gagner un point" hidden>
+              <span class="target__visual" aria-hidden="true"><span></span></span>
+            </button>
+
+            <div class="result-overlay" id="result-overlay" aria-labelledby="result-title" hidden>
+              <div class="result-card">
+                <p class="section-label">FIN DE LA PARTIE</p>
+                <h3 id="result-title">Temps écoulé</h3>
+                <p class="result-card__score"><span id="final-score">0</span><span class="result-card__unit">PTS</span></p>
+                <p class="result-card__message" id="result-message"></p>
+
+                <form class="score-form" id="score-form">
+                  <label for="player-name">Enregistre ton score avec un pseudonyme</label>
+                  <div class="score-form__row">
+                    <input id="player-name" name="nickname" type="text" maxlength="18" autocomplete="nickname" placeholder="Ton pseudonyme" required>
+                    <button class="button button--small" id="save-score-button" type="submit">Enregistrer</button>
+                  </div>
+                  <p class="score-form__feedback" id="save-feedback" aria-live="polite"></p>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <div class="game-card__footer">
+            <button class="button button--primary" id="start-button" type="button">
+              <span id="start-label">Lancer la partie</span>
+              <svg class="button__icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+                <path d="M4 10h11M10 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+            </button>
+            <p class="game-status" id="game-status" aria-live="polite">La partie dure 30 secondes. Prends position et lance le défi.</p>
+          </div>
+        </section>
+
+        <aside class="side-column" aria-label="Classement et règles du jeu">
+          <section class="leaderboard-card" aria-labelledby="leaderboard-title">
+            <div class="side-card__header">
+              <div>
+                <p class="section-label">SUR CET APPAREIL</p>
+                <h2 id="leaderboard-title">Meilleurs scores</h2>
+              </div>
+              <div class="record-badge">
+                <span>RECORD</span>
+                <strong id="personal-best">—</strong>
+              </div>
+            </div>
+
+            <ol class="leaderboard" id="leaderboard-list" aria-label="Les cinq meilleurs scores">
+              <li class="leaderboard__empty">Tes scores apparaîtront ici.</li>
+            </ol>
+            <p class="leaderboard__status" id="leaderboard-status" aria-live="polite">Les scores sont conservés uniquement dans ce navigateur.</p>
+            <button class="clear-button" id="clear-scores-button" type="button">Effacer le classement</button>
+          </section>
+
+          <section class="howto-card" aria-labelledby="howto-title">
+            <p class="section-label">LES RÈGLES</p>
+            <h2 id="howto-title">Simple et rapide.</h2>
+            <ol class="steps-list">
+              <li><span class="steps-list__number">01</span><span>Lance une partie de 30 secondes.</span></li>
+              <li><span class="steps-list__number">02</span><span>Clique sur la cible rouge dès qu’elle apparaît.</span></li>
+              <li><span class="steps-list__number">03</span><span>Chaque cible touchée ajoute un point.</span></li>
+            </ol>
+          </section>
+
+          <p class="privacy-note"><span class="privacy-note__icon" aria-hidden="true">AG</span>Pas de compte, pas de serveur. Ton classement reste sur cet appareil.</p>
+        </aside>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <span>AGORA CLICK CHALLENGE</span>
+      <span>Un jeu de réflexes, rien de plus.</span>
+    </footer>
+  </div>
+</body>
+</html>
