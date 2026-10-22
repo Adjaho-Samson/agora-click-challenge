@@ -1,4 +1,4 @@
-const CACHE_NAME = "agora-click-challenge-v1";
+const CACHE_NAME = "agora-click-challenge-v2";
 const APP_SHELL = [
   "./",
   "./index.html",
